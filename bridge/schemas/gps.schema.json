@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/contracts/gps.schema.json",
+  "title": "AndroidGpsPayload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "timestamp_ms",
+    "frame_id",
+    "latitude",
+    "longitude",
+    "altitude_m"
+  ],
+  "properties": {
+    "timestamp_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 253402300799000
+    },
+    "frame_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_./-]{0,127}$"
+    },
+    "timestamp_offset_ms": {
+      "type": "integer",
+      "minimum": -600000,
+      "maximum": 600000
+    },
+    "qos_profile": {
+      "type": "string",
+      "enum": [
+        "best_effort",
+        "reliable"
+      ]
+    },
+    "queue_depth": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1000
+    },
+    "latitude": {
+      "type": "number",
+      "minimum": -90,
+      "maximum": 90
+    },
+    "longitude": {
+      "type": "number",
+      "minimum": -180,
+      "maximum": 180
+    },
+    "altitude_m": {
+      "type": "number"
+    },
+    "covariance_m2": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": {
+        "type": "number",
+        "minimum": 0
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>android_sensor_viz</name>
+  <version>0.1.0</version>
+  <description>RViz2 panels to visualize Android sensor streams (IMU, GNSS, Camera, Battery, Magnetometer, Barometer, Joy) with a unified dashboard view.</description>
+
+  <maintainer email="noreply@example.com">android-space</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>pluginlib</depend>
+  <depend>rclcpp</depend>
+  <depend>builtin_interfaces</depend>
+  <depend>rviz_common</depend>
+  <depend>sensor_msgs</depend>
+
+  <build_depend>Qt5</build_depend>
+  <exec_depend>Qt5</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

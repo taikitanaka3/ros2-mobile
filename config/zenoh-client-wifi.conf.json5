@@ -1,0 +1,46 @@
+{
+  mode: "client",
+
+  // ZENOH_ENDPOINT 環境変数で上書き可能（例: tcp/192.168.1.100:7447）
+  // start_client.sh 経由の場合は自動で置換されます
+  connect: {
+    endpoints: [
+      "tcp/<SERVER_IP>:7447",
+    ],
+  },
+
+  scouting: {
+    multicast: {
+      enabled: false,
+    },
+  },
+
+  plugins: {
+    ros2dds: {
+      nodename: "zenoh_bridge_ros2dds",
+      namespace: "/",
+      domain: 0,
+      ros_localhost_only: false,
+      allow: {
+        publishers: [
+          "/.*",
+        ],
+        subscribers: [
+          "/.*",
+        ],
+        service_servers: [],
+        service_clients: [],
+        action_servers: [],
+        action_clients: [],
+      },
+      pub_max_frequencies: [
+        "/android/(imu|gps|battery|camera|joy)=20",
+      ],
+      pub_priorities: [
+        "/android/imu=2:express",
+        "/android/gps=4",
+        "/android/battery=4",
+      ],
+    },
+  },
+}

@@ -1,0 +1,26 @@
+<library path="android_sensor_viz">
+  <class
+    name="android_sensor_viz/AndroidImuPanel"
+    type="android_sensor_viz::AndroidImuPanel"
+    base_class_type="rviz_common::Panel">
+    <description>Displays Android IMU (sensor_msgs/msg/Imu) messages in RViz2.</description>
+  </class>
+  <class
+    name="android_sensor_viz/AndroidGnssPanel"
+    type="android_sensor_viz::AndroidGnssPanel"
+    base_class_type="rviz_common::Panel">
+    <description>Displays Android GNSS (NavSatFix) messages in RViz2.</description>
+  </class>
+  <class
+    name="android_sensor_viz/AndroidCameraPanel"
+    type="android_sensor_viz::AndroidCameraPanel"
+    base_class_type="rviz_common::Panel">
+    <description>Displays Android Camera (sensor_msgs/msg/CompressedImage) metadata in RViz2.</description>
+  </class>
+  <class
+    name="android_sensor_viz/AndroidDashboardPanel"
+    type="android_sensor_viz::AndroidDashboardPanel"
+    base_class_type="rviz_common::Panel">
+    <description>Unified Android sensor dashboard showing all sensor data (IMU compass, GNSS, camera preview, battery, magnetometer, barometer) in a single RViz2 panel.</description>
+  </class>
+</library>

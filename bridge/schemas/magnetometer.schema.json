@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/contracts/magnetometer.schema.json",
+  "title": "AndroidMagnetometerPayload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "timestamp_ms",
+    "frame_id",
+    "magnetic_field_ut"
+  ],
+  "properties": {
+    "timestamp_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 253402300799000
+    },
+    "frame_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_./-]{0,127}$"
+    },
+    "timestamp_offset_ms": {
+      "type": "integer",
+      "minimum": -600000,
+      "maximum": 600000
+    },
+    "qos_profile": {
+      "type": "string",
+      "enum": [
+        "best_effort",
+        "reliable"
+      ]
+    },
+    "queue_depth": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1000
+    },
+    "magnetic_field_ut": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

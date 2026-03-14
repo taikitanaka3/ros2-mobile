@@ -1,0 +1,44 @@
+{
+  mode: "client",
+
+  connect: {
+    endpoints: [
+      "tcp/127.0.0.1:7447",
+    ],
+  },
+
+  scouting: {
+    multicast: {
+      enabled: false,
+    },
+  },
+
+  plugins: {
+    ros2dds: {
+      nodename: "zenoh_bridge_ros2dds",
+      namespace: "/",
+      domain: 0,
+      ros_localhost_only: false,
+      allow: {
+        publishers: [
+          "/.*",
+        ],
+        subscribers: [
+          "/.*",
+        ],
+        service_servers: [],
+        service_clients: [],
+        action_servers: [],
+        action_clients: [],
+      },
+      pub_max_frequencies: [
+        "/android/(imu|gps|battery|camera|joy)=20",
+      ],
+      pub_priorities: [
+        "/android/imu=2:express",
+        "/android/gps=4",
+        "/android/battery=4",
+      ],
+    },
+  },
+}

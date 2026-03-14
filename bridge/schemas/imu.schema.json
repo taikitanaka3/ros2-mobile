@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/contracts/imu.schema.json",
+  "title": "AndroidImuPayload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "timestamp_ms",
+    "frame_id",
+    "orientation",
+    "angular_velocity",
+    "linear_acceleration"
+  ],
+  "properties": {
+    "timestamp_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 253402300799000
+    },
+    "frame_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_./-]{0,127}$"
+    },
+    "timestamp_offset_ms": {
+      "type": "integer",
+      "minimum": -600000,
+      "maximum": 600000
+    },
+    "qos_profile": {
+      "type": "string",
+      "enum": [
+        "best_effort",
+        "reliable"
+      ]
+    },
+    "queue_depth": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1000
+    },
+    "orientation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "x",
+        "y",
+        "z",
+        "w"
+      ],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        },
+        "w": {
+          "type": "number"
+        }
+      }
+    },
+    "angular_velocity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        }
+      }
+    },
+    "linear_acceleration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

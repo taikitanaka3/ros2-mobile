@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/contracts/thermal.schema.json",
+  "title": "AndroidThermalPayload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "timestamp_ms",
+    "frame_id",
+    "temperature_celsius"
+  ],
+  "properties": {
+    "timestamp_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 253402300799000
+    },
+    "frame_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_./-]{0,127}$"
+    },
+    "temperature_celsius": {
+      "type": "number",
+      "minimum": -40,
+      "maximum": 85
+    },
+    "timestamp_offset_ms": {
+      "type": "integer",
+      "minimum": -600000,
+      "maximum": 600000
+    },
+    "qos_profile": {
+      "type": "string",
+      "enum": [
+        "best_effort",
+        "reliable"
+      ]
+    },
+    "queue_depth": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1000
+    }
+  }
+}

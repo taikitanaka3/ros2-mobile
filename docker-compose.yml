@@ -1,0 +1,74 @@
+# ROS2Mobile — user-facing Docker Compose
+#
+# Starts two services:
+#   zenoh   — Zenoh router that Android devices connect to for sensor data
+#   bridge  — Python bridge that translates Zenoh JSON payloads → ROS 2 topics
+#
+# Quick start:
+#   cp .env.example .env          # copy and edit as needed
+#   docker compose up             # starts zenoh + bridge
+#
+# Android devices should be configured to connect to this machine's IP on ZENOH_PORT.
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # zenoh: Eclipse Zenoh router
+  #
+  # Android app publishes sensor JSON to this router over TCP.
+  # The bridge node subscribes from inside the same Docker network.
+  # Exposes ZENOH_PORT on the host so Android devices (WiFi/USB) can reach it.
+  # ---------------------------------------------------------------------------
+  zenoh:
+    image: ${ZENOH_IMAGE:-eclipse/zenoh:1.3.3}
+    environment:
+      - ZENOH_LOG_LEVEL=${ZENOH_LOG_LEVEL:-info}
+    ports:
+      - "${ZENOH_PORT_HOST:-7447}:${ZENOH_PORT:-7447}"
+    command: -l tcp/0.0.0.0:${ZENOH_PORT:-7447}
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z 127.0.0.1 ${ZENOH_PORT:-7447} || exit 1"]
+      interval: 2s
+      timeout: 2s
+      retries: 15
+      start_period: 3s
+    networks:
+      - conduit
+
+  # ---------------------------------------------------------------------------
+  # bridge: ROS2Mobile Python bridge node
+  #
+  # Subscribes to Zenoh sensor topics and republishes them as standard ROS 2
+  # messages (sensor_msgs, NavSatFix, etc.).  Mounts the local bridge/ source
+  # and contracts/ JSON schemas so you can edit without rebuilding the image.
+  #
+  # Bindings are specified via BRIDGE_BINDINGS (see .env.example).
+  # Format per binding:  STREAM:ZENOH_KEY:ROS_TOPIC
+  # Example:
+  #   imu:android/${DEVICE_ID}/imu:/android/${DEVICE_ID}/imu
+  # ---------------------------------------------------------------------------
+  bridge:
+    image: ${BRIDGE_IMAGE:-python:3.12-slim}
+    depends_on:
+      zenoh:
+        condition: service_healthy
+    environment:
+      - ZENOH_ENDPOINT=tcp/zenoh:${ZENOH_PORT:-7447}
+      - DEVICE_ID=${DEVICE_ID:-device1}
+    volumes:
+      - ./bridge:/app/bridge:ro
+    working_dir: /app
+    # Install dependencies at startup so the mounted source is always current.
+    # Replace the command below with a pre-built image for production use.
+    command: >
+      /bin/sh -c "
+        pip install --quiet -r bridge/requirements.txt &&
+        python -m bridge.cli
+          --zenoh tcp/zenoh:${ZENOH_PORT:-7447}
+          ${BRIDGE_BINDINGS:---binding imu:android/${DEVICE_ID:-device1}/imu:/android/${DEVICE_ID:-device1}/imu}
+      "
+    networks:
+      - conduit
+
+networks:
+  conduit:
