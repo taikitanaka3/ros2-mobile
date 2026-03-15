@@ -12,8 +12,8 @@ built-in sensors, transmits it over [Zenoh](https://zenoh.io) pub/sub
 middleware, and a Python bridge node converts each payload into standard ROS 2
 messages. An optional RViz 2 plugin provides live visualization panels.
 
-**Supported sensors**: IMU, GPS (GNSS), Camera, Battery, Magnetometer,
-Barometer, Joystick
+**Supported sensors**: IMU, GPS (GNSS), Camera, Front Camera, Battery,
+Magnetometer, Barometer, Joystick, Infrared, Thermal
 
 ---
 
@@ -89,23 +89,29 @@ the appropriate ROS 2 message type, and publishes it on a configured topic.
 
 | Sensor       | ROS 2 Message Type               | Default Topic                        |
 |--------------|----------------------------------|--------------------------------------|
-| IMU          | `sensor_msgs/Imu`                | `/android/{device}/imu`              |
-| GPS          | `sensor_msgs/NavSatFix`          | `/android/{device}/gps`              |
-| Camera       | `sensor_msgs/CompressedImage`    | `/android/{device}/camera`           |
-| Battery      | `sensor_msgs/BatteryState`       | `/android/{device}/battery`          |
-| Magnetometer | `sensor_msgs/MagneticField`      | `/android/{device}/magnetometer`     |
-| Barometer    | `sensor_msgs/FluidPressure`      | `/android/{device}/barometer`        |
-| Joystick     | `sensor_msgs/Joy`                | `/android/{device}/joy`              |
+| IMU          | `sensor_msgs/Imu`                | `/ros2mobile/imu`                       |
+| GPS          | `sensor_msgs/NavSatFix`          | `/ros2mobile/gps`                       |
+| Camera       | `sensor_msgs/Image`              | `/ros2mobile/camera/image_raw`          |
+| Front Camera | `sensor_msgs/Image`              | `/ros2mobile/front_camera/image_raw`    |
+| Battery      | `sensor_msgs/BatteryState`       | `/ros2mobile/battery`                   |
+| Magnetometer | `sensor_msgs/MagneticField`      | `/ros2mobile/magnetometer`              |
+| Barometer    | `sensor_msgs/FluidPressure`      | `/ros2mobile/barometer`                 |
+| Joystick     | `sensor_msgs/Joy`                | `/ros2mobile/joy`                       |
+| Infrared     | `sensor_msgs/Range`              | `/ros2mobile/infrared`                  |
+| Thermal      | `std_msgs/Float32`               | `/ros2mobile/thermal`                   |
 
-`{device}` is the device identifier configured in the app (e.g., `device1`).
-
-Topic bindings are explicit. The bridge CLI requires a `--binding` flag for each
-stream:
+Use `--all` to bind every stream with default topics, or `--binding` for
+individual streams:
 
 ```bash
-python3 -m bridge.cli \
-  --binding imu:android/device1/imu:/android/device1/imu \
-  --binding gps:android/device1/gps:/android/device1/gps
+# All streams at once:
+python3 -m bridge --all
+
+# Shorthand — just the stream name:
+python3 -m bridge --binding imu --binding gps
+
+# Full form — custom Zenoh key and ROS topic:
+python3 -m bridge --binding imu:ros2mobile/imu:/ros2mobile/imu
 ```
 
 ---
@@ -179,8 +185,7 @@ Copy `.env.example` to `.env` and customize:
 cp .env.example .env
 ```
 
-Key variables: `ZENOH_PORT`, `DEVICE_ID`, `BRIDGE_BINDINGS` (see `.env.example`
-for details).
+Key variables: `ZENOH_PORT`, `BRIDGE_BINDINGS` (see `.env.example` for details).
 
 ---
 

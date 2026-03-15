@@ -48,7 +48,7 @@ private:
     static QString formatImuMessage(const sensor_msgs::msg::Imu &msg);
     static QString formatImuSummary(const sensor_msgs::msg::Imu &msg, double rate_hz);
 
-    QString topic_{"/android/imu"};
+    QString topic_{"/ros2mobile/imu"};
 
     QLineEdit *topic_input_{nullptr};
     QLabel *summary_label_{nullptr};
@@ -101,7 +101,7 @@ private:
     static QString formatGnssMessage(const sensor_msgs::msg::NavSatFix &msg);
     static QString formatGnssSummary(const sensor_msgs::msg::NavSatFix &msg, double rate_hz);
 
-    QString topic_{"/android/gps"};
+    QString topic_{"/ros2mobile/gps"};
 
     QLineEdit *topic_input_{nullptr};
     QLabel *summary_label_{nullptr};
@@ -154,7 +154,7 @@ private:
     static QString formatCameraMessage(const sensor_msgs::msg::Image &msg);
     static QString formatCameraSummary(const sensor_msgs::msg::Image &msg, double rate_hz);
 
-    QString topic_{"/android/camera/image_raw"};
+    QString topic_{"/ros2mobile/camera/image_raw"};
 
     QLineEdit *topic_input_{nullptr};
     QLabel *summary_label_{nullptr};

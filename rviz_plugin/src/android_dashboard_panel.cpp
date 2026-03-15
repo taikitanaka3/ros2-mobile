@@ -651,7 +651,7 @@ void AndroidDashboardPanel::subscribeAll()
     }
 
     try {
-        thermal_sub_ = node_->create_subscription<sensor_msgs::msg::Temperature>(
+        thermal_sub_ = node_->create_subscription<std_msgs::msg::Float32>(
             pfx + "/thermal", qos,
             std::bind(&AndroidDashboardPanel::onThermal, this, std::placeholders::_1));
     } catch (...) {
@@ -922,7 +922,7 @@ void AndroidDashboardPanel::onFrontCamera(const sensor_msgs::msg::Image::SharedP
     front_camera_state_.recordMessage();
 }
 
-void AndroidDashboardPanel::onThermal(const sensor_msgs::msg::Temperature::SharedPtr msg)
+void AndroidDashboardPanel::onThermal(const std_msgs::msg::Float32::SharedPtr msg)
 {
     if (shutting_down_ || !msg) {
         return;
@@ -933,7 +933,7 @@ void AndroidDashboardPanel::onThermal(const sensor_msgs::msg::Temperature::Share
     if (thermal_label_) {
         thermal_label_->setText(
             QString("Temperature: %1 °C")
-                .arg(static_cast<double>(msg->temperature), 0, 'f', 1));
+                .arg(static_cast<double>(msg->data), 0, 'f', 1));
     }
 }
 

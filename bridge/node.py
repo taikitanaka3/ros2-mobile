@@ -24,6 +24,7 @@ ROS_MESSAGE_TYPES = {
     "magnetometer": "sensor_msgs/msg/MagneticField",
     "barometer": "sensor_msgs/msg/FluidPressure",
     "infrared": "sensor_msgs/msg/Range",
+    "thermal": "std_msgs/msg/Float32",
 }
 QOS_PROFILES = {"best_effort", "reliable"}
 DEFAULT_QOS_PROFILE = "best_effort"

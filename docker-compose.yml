@@ -44,9 +44,8 @@ services:
   # and contracts/ JSON schemas so you can edit without rebuilding the image.
   #
   # Bindings are specified via BRIDGE_BINDINGS (see .env.example).
-  # Format per binding:  STREAM:ZENOH_KEY:ROS_TOPIC
-  # Example:
-  #   imu:android/${DEVICE_ID}/imu:/android/${DEVICE_ID}/imu
+  # Use --all for all streams, or --binding <stream> for individual ones.
+  # Example:  --binding imu --binding gps
   # ---------------------------------------------------------------------------
   bridge:
     image: ${BRIDGE_IMAGE:-python:3.12-slim}
@@ -55,13 +54,12 @@ services:
         condition: service_healthy
     environment:
       - ZENOH_ENDPOINT=tcp/zenoh:${ZENOH_PORT:-7447}
-      - DEVICE_ID=${DEVICE_ID:-device1}
     volumes:
       - ./bridge:/app/bridge:ro
     working_dir: /app
     # Install dependencies at startup so the mounted source is always current.
     # Replace the command below with a pre-built image for production use.
-    command: ["/bin/sh", "-c", "pip install --quiet -r bridge/requirements.txt && python -m bridge.cli --zenoh tcp/zenoh:${ZENOH_PORT:-7447} ${BRIDGE_BINDINGS:---binding imu:android/${DEVICE_ID:-device1}/imu:/android/${DEVICE_ID:-device1}/imu}"]
+    command: ["/bin/sh", "-c", "pip install --quiet -r bridge/requirements.txt && python -m bridge --zenoh-endpoint tcp/zenoh:${ZENOH_PORT:-7447} ${BRIDGE_BINDINGS:---all}"]
     networks:
       - conduit
 

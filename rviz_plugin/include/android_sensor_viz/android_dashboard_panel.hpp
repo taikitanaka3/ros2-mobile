@@ -14,7 +14,7 @@
 #include <sensor_msgs/msg/joy.hpp>
 #include <sensor_msgs/msg/magnetic_field.hpp>
 #include <sensor_msgs/msg/fluid_pressure.hpp>
-#include <sensor_msgs/msg/temperature.hpp>
+#include <std_msgs/msg/float32.hpp>
 #include <sensor_msgs/msg/range.hpp>
 #include <rviz_common/panel.hpp>
 
@@ -131,7 +131,7 @@ private:
     void onMagnetometer(const sensor_msgs::msg::MagneticField::SharedPtr msg);
     void onBarometer(const sensor_msgs::msg::FluidPressure::SharedPtr msg);
     void onFrontCamera(const sensor_msgs::msg::Image::SharedPtr msg);
-    void onThermal(const sensor_msgs::msg::Temperature::SharedPtr msg);
+    void onThermal(const std_msgs::msg::Float32::SharedPtr msg);
     void onInfrared(const sensor_msgs::msg::Range::SharedPtr msg);
 
     void updateHealthStrip();
@@ -139,7 +139,7 @@ private:
     void stopSpinning();
 
     // Topic prefix
-    QString prefix_{"/android"};
+    QString prefix_{"/ros2mobile"};
 
     // ROS 2 node and executor
     rclcpp::Node::SharedPtr node_;
@@ -154,7 +154,7 @@ private:
     rclcpp::Subscription<sensor_msgs::msg::MagneticField>::SharedPtr mag_sub_;
     rclcpp::Subscription<sensor_msgs::msg::FluidPressure>::SharedPtr baro_sub_;
     rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr front_camera_sub_;
-    rclcpp::Subscription<sensor_msgs::msg::Temperature>::SharedPtr thermal_sub_;
+    rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr thermal_sub_;
     rclcpp::Subscription<sensor_msgs::msg::Range>::SharedPtr ir_sub_;
 
     // Per-sensor state

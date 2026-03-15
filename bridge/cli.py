@@ -9,6 +9,24 @@ from typing import Any, Mapping, Sequence
 from .node import BridgeNode, ROS_MESSAGE_TYPES, StreamBinding
 
 LOGGER = logging.getLogger(__name__)
+
+DEFAULT_ZENOH_PREFIX = "ros2mobile"
+DEFAULT_ROS_PREFIX = "/ros2mobile"
+
+# Streams whose ROS topic differs from the simple /<prefix>/<stream> pattern.
+_ROS_TOPIC_OVERRIDES: dict[str, str] = {
+    "camera": f"{DEFAULT_ROS_PREFIX}/camera/image_raw",
+    "front_camera": f"{DEFAULT_ROS_PREFIX}/front_camera/image_raw",
+}
+
+ALL_STREAMS = sorted(ROS_MESSAGE_TYPES)
+
+
+def _default_binding(stream: str) -> StreamBinding:
+    """Build the default StreamBinding for a given stream name."""
+    zenoh_topic = f"{DEFAULT_ZENOH_PREFIX}/{stream}"
+    ros_topic = _ROS_TOPIC_OVERRIDES.get(stream, f"{DEFAULT_ROS_PREFIX}/{stream}")
+    return StreamBinding(stream=stream, zenoh_topic=zenoh_topic, ros_topic=ros_topic)
 SENSOR_MESSAGE_CLASS_NAMES = {
     "sensor_msgs/msg/Imu": "Imu",
     "sensor_msgs/msg/NavSatFix": "NavSatFix",
@@ -18,6 +36,7 @@ SENSOR_MESSAGE_CLASS_NAMES = {
     "sensor_msgs/msg/MagneticField": "MagneticField",
     "sensor_msgs/msg/FluidPressure": "FluidPressure",
     "sensor_msgs/msg/Range": "Range",
+    "std_msgs/msg/Float32": "Float32",
 }
 
 
@@ -27,15 +46,26 @@ class RuntimeDependencyError(RuntimeError):
 
 def parse_binding(value: str) -> StreamBinding:
     parts = [part.strip() for part in value.split(":", 2)]
+
+    # Shorthand: just the stream name → expand to default zenoh/ros topics.
+    if len(parts) == 1 and parts[0]:
+        stream = parts[0]
+        if stream not in ROS_MESSAGE_TYPES:
+            known = ", ".join(ALL_STREAMS)
+            raise argparse.ArgumentTypeError(
+                f"Unsupported stream {stream!r}. Known streams: {known}"
+            )
+        return _default_binding(stream)
+
     if len(parts) != 3 or any(not part for part in parts):
         raise argparse.ArgumentTypeError(
-            "Binding format must be STREAM:ZENOH_KEY:ROS_TOPIC "
-            "(example: imu:android/device1/imu:/android/device1/imu)"
+            "Binding format must be STREAM or STREAM:ZENOH_KEY:ROS_TOPIC "
+            "(example: imu  or  imu:ros2mobile/imu:/ros2mobile/imu)"
         )
 
     stream, zenoh_topic, ros_topic = parts
     if stream not in ROS_MESSAGE_TYPES:
-        known = ", ".join(sorted(ROS_MESSAGE_TYPES))
+        known = ", ".join(ALL_STREAMS)
         raise argparse.ArgumentTypeError(
             f"Unsupported stream {stream!r}. Known streams: {known}"
         )
@@ -51,13 +81,20 @@ def build_parser() -> argparse.ArgumentParser:
         "--binding",
         action="append",
         type=parse_binding,
-        required=True,
-        metavar="STREAM:ZENOH_KEY:ROS_TOPIC",
+        metavar="STREAM[:ZENOH_KEY:ROS_TOPIC]",
         help=(
-            "Route mapping for one stream. Repeat this option for multiple streams. "
-            "Valid STREAM values: imu, gps, battery, camera, front_camera, "
-            "joy, magnetometer, barometer, infrared."
+            "Route mapping for one stream. Repeat for multiple streams. "
+            "Pass just the stream name (e.g. --binding imu) to use default "
+            "Zenoh/ROS topics, or the full STREAM:ZENOH:ROS form for custom routes. "
+            "Valid streams: " + ", ".join(ALL_STREAMS) + "."
         ),
+    )
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        default=False,
+        dest="all_streams",
+        help="Bind all supported streams with default Zenoh/ROS topics.",
     )
     parser.add_argument(
         "--zenoh-endpoint",
@@ -116,6 +153,7 @@ def _load_runtime_dependencies() -> tuple[Any, Any, Any]:
         ("zenoh", "zenoh"),
         ("rclpy", None),
         ("sensor_msgs.msg", None),
+        ("std_msgs.msg", None),
     ]
 
     for module_name, install_name in dependencies:
@@ -139,16 +177,20 @@ def _load_runtime_dependencies() -> tuple[Any, Any, Any]:
         )
         raise RuntimeDependencyError("\n".join(errors))
 
-    return modules["zenoh"], modules["rclpy"], modules["sensor_msgs.msg"]
+    return modules["zenoh"], modules["rclpy"], modules["sensor_msgs.msg"], modules["std_msgs.msg"]
 
 
-def _build_message_type_map(sensor_msgs_msg: Any) -> dict[str, Any]:
+def _build_message_type_map(sensor_msgs_msg: Any, std_msgs_msg: Any) -> dict[str, Any]:
     result: dict[str, Any] = {}
     for ros_message_type, class_name in SENSOR_MESSAGE_CLASS_NAMES.items():
-        message_class = getattr(sensor_msgs_msg, class_name, None)
+        if ros_message_type.startswith("std_msgs/"):
+            module = std_msgs_msg
+        else:
+            module = sensor_msgs_msg
+        message_class = getattr(module, class_name, None)
         if message_class is None:
             raise RuntimeDependencyError(
-                f"sensor_msgs.msg.{class_name} is missing. Verify ROS2 sensor message packages."
+                f"{ros_message_type}.{class_name} is missing. Verify ROS2 message packages."
             )
         result[ros_message_type] = message_class
     return result
@@ -324,6 +366,15 @@ def run(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.queue_size <= 0:
         parser.error("--queue-size must be > 0")
+
+    # Resolve --all / --binding: mutually exclusive, at least one required.
+    if args.all_streams and args.binding:
+        parser.error("--all and --binding are mutually exclusive")
+    if args.all_streams:
+        args.binding = [_default_binding(s) for s in ALL_STREAMS]
+    if not args.binding:
+        parser.error("one of --all or --binding is required")
+
     _configure_logging(args.log_level)
 
     if args.ros_domain_id is not None:
@@ -331,8 +382,8 @@ def run(argv: Sequence[str] | None = None) -> int:
         LOGGER.info("Using ROS_DOMAIN_ID=%d", args.ros_domain_id)
 
     try:
-        zenoh, rclpy, sensor_msgs_msg = _load_runtime_dependencies()
-        message_type_map = _build_message_type_map(sensor_msgs_msg)
+        zenoh, rclpy, sensor_msgs_msg, std_msgs_msg = _load_runtime_dependencies()
+        message_type_map = _build_message_type_map(sensor_msgs_msg, std_msgs_msg)
         rclpy_qos = _load_rclpy_qos_module()
     except RuntimeDependencyError as exc:
         LOGGER.error("%s", exc)

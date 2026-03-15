@@ -34,12 +34,12 @@
         action_clients: [],
       },
       pub_max_frequencies: [
-        "/android/(imu|gps|battery|camera|joy)=20",
+        "/ros2mobile/(imu|gps|battery|camera|front_camera|joy|magnetometer|barometer|infrared|thermal)=20",
       ],
       pub_priorities: [
-        "/android/imu=2:express",
-        "/android/gps=4",
-        "/android/battery=4",
+        "/ros2mobile/imu=2:express",
+        "/ros2mobile/gps=4",
+        "/ros2mobile/battery=4",
       ],
     },
   },

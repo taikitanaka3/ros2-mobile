@@ -37,6 +37,8 @@ def validate_and_transform(stream: str, payload: Mapping[str, Any]) -> dict[str,
         return _transform_barometer(payload)
     if stream == "infrared":
         return _transform_infrared(payload)
+    if stream == "thermal":
+        return _transform_thermal(payload)
     raise ValueError(f"Unsupported stream type: {stream}")
 
 
@@ -89,10 +91,30 @@ def _transform_camera(payload: Mapping[str, Any]) -> dict[str, Any]:
             "$.data_base64: invalid base64-encoded image data"
         ) from exc
 
+    encoding = str(payload["encoding"])
+    width = int(payload.get("width", 0))
+    height = int(payload.get("height", 0))
+    # NV21: 1.5 bytes per pixel (Y plane + interleaved VU)
+    if encoding == "nv21":
+        step = width
+    elif encoding in ("bgr8", "rgb8"):
+        step = width * 3
+    elif encoding in ("bgra8", "rgba8"):
+        step = width * 4
+    elif encoding == "mono8":
+        step = width
+    else:
+        # Fallback: estimate from data size
+        step = width * 3 if width > 0 and height > 0 else 0
+
     return {
         "header": _header(payload),
-        "format": str(payload["encoding"]),
-        "data": image_data,
+        "encoding": encoding,
+        "width": width,
+        "height": height,
+        "step": step,
+        "is_bigendian": 0,
+        "data": list(image_data),
     }
 
 
@@ -146,6 +168,19 @@ def _transform_infrared(payload: Mapping[str, Any]) -> dict[str, Any]:
         "min_range": 0.0,
         "max_range": 0.05,
         "range": float(payload["distance_cm"]) / 100.0,
+    }
+
+
+def _transform_thermal(payload: Mapping[str, Any]) -> dict[str, Any]:
+    """Convert Android device-temperature payload to ROS Float32.
+
+    Android reports CPU/battery temperature as a simple scalar — not a
+    thermal-camera reading — so we use std_msgs/Float32 (just ``data``)
+    instead of sensor_msgs/Temperature.
+    """
+    validate_payload("thermal", payload)
+    return {
+        "data": float(payload["temperature_celsius"]),
     }
 
 

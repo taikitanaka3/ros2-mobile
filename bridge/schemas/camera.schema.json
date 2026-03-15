@@ -45,7 +45,11 @@
       "type": "string",
       "enum": [
         "jpeg",
-        "png"
+        "png",
+        "nv21",
+        "bgr8",
+        "rgb8",
+        "mono8"
       ]
     },
     "width": {

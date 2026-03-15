@@ -8,6 +8,7 @@ find_package(builtin_interfaces REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rviz_common REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
@@ -45,6 +46,7 @@ ament_target_dependencies(${PROJECT_NAME}
   rclcpp
   rviz_common
   sensor_msgs
+  std_msgs
 )
 
 target_link_libraries(${PROJECT_NAME} Qt${QT_VERSION_MAJOR}::Widgets)

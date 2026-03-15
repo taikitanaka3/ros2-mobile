@@ -153,7 +153,7 @@ void AndroidImuPanel::setupUi()
     auto *layout = new QVBoxLayout(this);
     layout->addWidget(buildInputGroup(
         this,
-        "IMU (/android/<device>/imu)",
+        "IMU (/ros2mobile/imu)",
         topic_,
         &topic_input_,
         &summary_label_,
@@ -482,7 +482,7 @@ void AndroidGnssPanel::setupUi()
     auto *layout = new QVBoxLayout(this);
     layout->addWidget(buildInputGroup(
         this,
-        "GNSS / GPS (/android/<device>/gps)",
+        "GNSS / GPS (/ros2mobile/gps)",
         topic_,
         &topic_input_,
         &summary_label_,
@@ -807,7 +807,7 @@ void AndroidCameraPanel::setupUi()
     auto *layout = new QVBoxLayout(this);
     layout->addWidget(buildInputGroup(
         this,
-        "Camera (/android/<device>/camera)",
+        "Camera (/ros2mobile/camera/image_raw)",
         topic_,
         &topic_input_,
         &summary_label_,
