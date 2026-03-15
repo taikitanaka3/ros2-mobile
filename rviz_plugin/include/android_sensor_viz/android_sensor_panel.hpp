@@ -16,7 +16,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/imu.hpp>
-#include <sensor_msgs/msg/compressed_image.hpp>
+#include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/msg/nav_sat_fix.hpp>
 #include <rviz_common/panel.hpp>
 
@@ -149,12 +149,12 @@ private:
     void startSpinning();
     void subscribeTopics();
     void onTopicChanged();
-    void onMessage(const sensor_msgs::msg::CompressedImage::SharedPtr msg);
+    void onMessage(const sensor_msgs::msg::Image::SharedPtr msg);
     void updateStatusLabel();
-    static QString formatCameraMessage(const sensor_msgs::msg::CompressedImage &msg);
-    static QString formatCameraSummary(const sensor_msgs::msg::CompressedImage &msg, double rate_hz);
+    static QString formatCameraMessage(const sensor_msgs::msg::Image &msg);
+    static QString formatCameraSummary(const sensor_msgs::msg::Image &msg, double rate_hz);
 
-    QString topic_{"/android/camera/image_raw/compressed"};
+    QString topic_{"/android/camera/image_raw"};
 
     QLineEdit *topic_input_{nullptr};
     QLabel *summary_label_{nullptr};
@@ -163,7 +163,7 @@ private:
 
     rclcpp::Node::SharedPtr node_;
     rclcpp::executors::SingleThreadedExecutor executor_;
-    rclcpp::Subscription<sensor_msgs::msg::CompressedImage>::SharedPtr camera_subscription_;
+    rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr camera_subscription_;
     QTimer *spin_timer_{nullptr};
     QMetaObject::Connection spin_connection_;
     int message_count_{0};

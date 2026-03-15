@@ -303,7 +303,7 @@ void AndroidDashboardPanel::setupUi()
             auto *left = new QVBoxLayout();
             left->setSpacing(4);
 
-            left->addWidget(makeSectionTitle("IMU COMPASS"));
+            left->addWidget(makeSectionTitle("IMU"));
 
             compass_widget_ = new CompassWidget();
             compass_widget_->setFixedSize(150, 150);
@@ -611,8 +611,8 @@ void AndroidDashboardPanel::subscribeAll()
     }
 
     try {
-        camera_sub_ = node_->create_subscription<sensor_msgs::msg::CompressedImage>(
-            pfx + "/camera/image_raw/compressed", qos,
+        camera_sub_ = node_->create_subscription<sensor_msgs::msg::Image>(
+            pfx + "/camera/image_raw", qos,
             std::bind(&AndroidDashboardPanel::onCamera, this, std::placeholders::_1));
     } catch (...) {
         camera_sub_.reset();
@@ -643,8 +643,8 @@ void AndroidDashboardPanel::subscribeAll()
     }
 
     try {
-        front_camera_sub_ = node_->create_subscription<sensor_msgs::msg::CompressedImage>(
-            pfx + "/front_camera/image_raw/compressed", qos,
+        front_camera_sub_ = node_->create_subscription<sensor_msgs::msg::Image>(
+            pfx + "/front_camera/image_raw", qos,
             std::bind(&AndroidDashboardPanel::onFrontCamera, this, std::placeholders::_1));
     } catch (...) {
         front_camera_sub_.reset();
@@ -853,7 +853,7 @@ void AndroidDashboardPanel::onBattery(const sensor_msgs::msg::BatteryState::Shar
     }
 }
 
-void AndroidDashboardPanel::onCamera(const sensor_msgs::msg::CompressedImage::SharedPtr msg)
+void AndroidDashboardPanel::onCamera(const sensor_msgs::msg::Image::SharedPtr msg)
 {
     if (shutting_down_ || !msg) {
         return;
@@ -914,7 +914,7 @@ void AndroidDashboardPanel::onBarometer(const sensor_msgs::msg::FluidPressure::S
     }
 }
 
-void AndroidDashboardPanel::onFrontCamera(const sensor_msgs::msg::CompressedImage::SharedPtr msg)
+void AndroidDashboardPanel::onFrontCamera(const sensor_msgs::msg::Image::SharedPtr msg)
 {
     if (shutting_down_ || !msg) {
         return;

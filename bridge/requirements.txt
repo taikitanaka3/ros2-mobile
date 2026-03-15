@@ -1,1 +1,1 @@
-eclipse-zenoh>=1.5,<2
+eclipse-zenoh>=1.5.0,<1.6

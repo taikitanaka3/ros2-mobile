@@ -15,8 +15,8 @@ services:
   # ---------------------------------------------------------------------------
   # zenoh: Eclipse Zenoh router
   #
-  # Android app publishes sensor JSON to this router over TCP.
-  # The bridge node subscribes from inside the same Docker network.
+  # Android app publishes sensor JSON to this router over UDP (default) or TCP.
+  # The bridge node subscribes from inside the same Docker network via TCP.
   # Exposes ZENOH_PORT on the host so Android devices (WiFi/USB) can reach it.
   # ---------------------------------------------------------------------------
   zenoh:
@@ -24,8 +24,9 @@ services:
     environment:
       - ZENOH_LOG_LEVEL=${ZENOH_LOG_LEVEL:-info}
     ports:
-      - "${ZENOH_PORT_HOST:-7447}:${ZENOH_PORT:-7447}"
-    command: -l tcp/0.0.0.0:${ZENOH_PORT:-7447}
+      - "${ZENOH_PORT_HOST:-7447}:${ZENOH_PORT:-7447}/tcp"
+      - "${ZENOH_PORT_HOST:-7447}:${ZENOH_PORT:-7447}/udp"
+    command: -l tcp/0.0.0.0:${ZENOH_PORT:-7447} -l udp/0.0.0.0:${ZENOH_PORT:-7447}
     healthcheck:
       test: ["CMD-SHELL", "nc -z 127.0.0.1 ${ZENOH_PORT:-7447} || exit 1"]
       interval: 2s
@@ -60,13 +61,7 @@ services:
     working_dir: /app
     # Install dependencies at startup so the mounted source is always current.
     # Replace the command below with a pre-built image for production use.
-    command: >
-      /bin/sh -c "
-        pip install --quiet -r bridge/requirements.txt &&
-        python -m bridge.cli
-          --zenoh tcp/zenoh:${ZENOH_PORT:-7447}
-          ${BRIDGE_BINDINGS:---binding imu:android/${DEVICE_ID:-device1}/imu:/android/${DEVICE_ID:-device1}/imu}
-      "
+    command: ["/bin/sh", "-c", "pip install --quiet -r bridge/requirements.txt && python -m bridge.cli --zenoh tcp/zenoh:${ZENOH_PORT:-7447} ${BRIDGE_BINDINGS:---binding imu:android/${DEVICE_ID:-device1}/imu:/android/${DEVICE_ID:-device1}/imu}"]
     networks:
       - conduit
 

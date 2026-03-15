@@ -904,7 +904,7 @@ void AndroidCameraPanel::subscribeTopics()
 
     if (!topic_.isEmpty()) {
         try {
-            camera_subscription_ = node_->create_subscription<sensor_msgs::msg::CompressedImage>(
+            camera_subscription_ = node_->create_subscription<sensor_msgs::msg::Image>(
                 topic_.toStdString(),
                 rclcpp::QoS(10).best_effort(),
                 std::bind(&AndroidCameraPanel::onMessage, this, std::placeholders::_1)
@@ -938,7 +938,7 @@ void AndroidCameraPanel::onTopicChanged()
     subscribeTopics();
 }
 
-void AndroidCameraPanel::onMessage(const sensor_msgs::msg::CompressedImage::SharedPtr msg)
+void AndroidCameraPanel::onMessage(const sensor_msgs::msg::Image::SharedPtr msg)
 {
     if (shutting_down_ || !summary_label_ || !data_label_ || !msg) {
         return;
@@ -976,25 +976,30 @@ void AndroidCameraPanel::onMessage(const sensor_msgs::msg::CompressedImage::Shar
     message_count_++;
 }
 
-QString AndroidCameraPanel::formatCameraMessage(const sensor_msgs::msg::CompressedImage &msg)
+QString AndroidCameraPanel::formatCameraMessage(const sensor_msgs::msg::Image &msg)
 {
     return QString("frame_id: %1\n"
                    "stamp: %2\n"
-                   "format: %3\n"
-                   "data size: %4 bytes")
+                   "encoding: %3\n"
+                   "size: %4x%5\n"
+                   "data size: %6 bytes")
         .arg(QString::fromStdString(msg.header.frame_id))
         .arg(formatStamp(msg.header.stamp))
-        .arg(QString::fromStdString(msg.format))
+        .arg(QString::fromStdString(msg.encoding))
+        .arg(msg.width)
+        .arg(msg.height)
         .arg(msg.data.size());
 }
 
-QString AndroidCameraPanel::formatCameraSummary(const sensor_msgs::msg::CompressedImage &msg, double rate_hz)
+QString AndroidCameraPanel::formatCameraSummary(const sensor_msgs::msg::Image &msg, double rate_hz)
 {
     return QString(
-               "Rate: %1 Hz  |  Format: %2\n"
-               "Data size: %3 bytes")
+               "Rate: %1 Hz  |  %2x%3 %4\n"
+               "Data size: %5 bytes")
         .arg(rate_hz, 0, 'f', 1)
-        .arg(QString::fromStdString(msg.format))
+        .arg(msg.width)
+        .arg(msg.height)
+        .arg(QString::fromStdString(msg.encoding))
         .arg(msg.data.size());
 }
 

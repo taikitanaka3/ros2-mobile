@@ -10,7 +10,7 @@
 #include <sensor_msgs/msg/imu.hpp>
 #include <sensor_msgs/msg/nav_sat_fix.hpp>
 #include <sensor_msgs/msg/battery_state.hpp>
-#include <sensor_msgs/msg/compressed_image.hpp>
+#include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/msg/joy.hpp>
 #include <sensor_msgs/msg/magnetic_field.hpp>
 #include <sensor_msgs/msg/fluid_pressure.hpp>
@@ -126,11 +126,11 @@ private:
     void onImu(const sensor_msgs::msg::Imu::SharedPtr msg);
     void onGps(const sensor_msgs::msg::NavSatFix::SharedPtr msg);
     void onBattery(const sensor_msgs::msg::BatteryState::SharedPtr msg);
-    void onCamera(const sensor_msgs::msg::CompressedImage::SharedPtr msg);
+    void onCamera(const sensor_msgs::msg::Image::SharedPtr msg);
     void onJoy(const sensor_msgs::msg::Joy::SharedPtr msg);
     void onMagnetometer(const sensor_msgs::msg::MagneticField::SharedPtr msg);
     void onBarometer(const sensor_msgs::msg::FluidPressure::SharedPtr msg);
-    void onFrontCamera(const sensor_msgs::msg::CompressedImage::SharedPtr msg);
+    void onFrontCamera(const sensor_msgs::msg::Image::SharedPtr msg);
     void onThermal(const sensor_msgs::msg::Temperature::SharedPtr msg);
     void onInfrared(const sensor_msgs::msg::Range::SharedPtr msg);
 
@@ -149,11 +149,11 @@ private:
     rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub_;
     rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr gps_sub_;
     rclcpp::Subscription<sensor_msgs::msg::BatteryState>::SharedPtr battery_sub_;
-    rclcpp::Subscription<sensor_msgs::msg::CompressedImage>::SharedPtr camera_sub_;
+    rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr camera_sub_;
     rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
     rclcpp::Subscription<sensor_msgs::msg::MagneticField>::SharedPtr mag_sub_;
     rclcpp::Subscription<sensor_msgs::msg::FluidPressure>::SharedPtr baro_sub_;
-    rclcpp::Subscription<sensor_msgs::msg::CompressedImage>::SharedPtr front_camera_sub_;
+    rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr front_camera_sub_;
     rclcpp::Subscription<sensor_msgs::msg::Temperature>::SharedPtr thermal_sub_;
     rclcpp::Subscription<sensor_msgs::msg::Range>::SharedPtr ir_sub_;
 

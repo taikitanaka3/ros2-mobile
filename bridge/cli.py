@@ -13,7 +13,7 @@ SENSOR_MESSAGE_CLASS_NAMES = {
     "sensor_msgs/msg/Imu": "Imu",
     "sensor_msgs/msg/NavSatFix": "NavSatFix",
     "sensor_msgs/msg/BatteryState": "BatteryState",
-    "sensor_msgs/msg/CompressedImage": "CompressedImage",
+    "sensor_msgs/msg/Image": "Image",
     "sensor_msgs/msg/Joy": "Joy",
     "sensor_msgs/msg/MagneticField": "MagneticField",
     "sensor_msgs/msg/FluidPressure": "FluidPressure",

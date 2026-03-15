@@ -15,7 +15,7 @@
     name="android_sensor_viz/AndroidCameraPanel"
     type="android_sensor_viz::AndroidCameraPanel"
     base_class_type="rviz_common::Panel">
-    <description>Displays Android Camera (sensor_msgs/msg/CompressedImage) metadata in RViz2.</description>
+    <description>Displays Android Camera (sensor_msgs/msg/Image) metadata in RViz2.</description>
   </class>
   <class
     name="android_sensor_viz/AndroidDashboardPanel"
