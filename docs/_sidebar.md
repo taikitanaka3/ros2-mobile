@@ -1,2 +1,2 @@
-- [Home](/)
+- [Quick Start](/)
 - [Privacy Policy](privacy-policy.md)

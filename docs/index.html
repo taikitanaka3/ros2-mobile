@@ -1,39 +1,139 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta name="description" content="ros2mobile — stream Android phone sensors to ROS 2 via Zenoh">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <title>ros2mobile</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0.9.0/dist/css/theme-simple-dark.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0.9.0/dist/css/theme-simple.css">
   <style>
     :root {
-      --base-background-color: #1a1a2e;
-      --base-color: #e0e0e0;
-      --heading-color: #d4af37;
-      --link-color: #d4af37;
-      --link-color--hover: #f0d060;
-      --sidebar-background: #16213e;
-      --sidebar-name-color: #d4af37;
-      --sidebar-nav-link-color--active: #d4af37;
+      --theme-hue: 43;
+      --theme-saturation: 74%;
+      --theme-lightness: 46%;
+
+      --base-background-color: #ffffff;
+      --base-color: #2c3e50;
+      --base-font-size: 16px;
+      --base-line-height: 1.7;
+      --content-max-width: 55em;
+
+      --heading-color: #1a1a2e;
+      --strong-color: #1a1a2e;
+
+      --link-color: #7a6420;
+      --link-color--hover: #b8860b;
+      --link-border-bottom: none;
+      --link-text-decoration: none;
+      --link-text-decoration--hover: underline;
+
+      --sidebar-width: 17rem;
+      --sidebar-background: #fafaf8;
+      --sidebar-border-color: #eae6dc;
+      --sidebar-border-width: 1px;
+      --sidebar-name-color: #1a1a2e;
+      --sidebar-name-font-weight: 700;
+      --sidebar-nav-link-color: #2c3e50;
+      --sidebar-nav-link-color--active: #7a6420;
+      --sidebar-nav-link-border-color--active: #d4af37;
+      --sidebar-nav-link-font-weight--active: 600;
+
       --cover-background-color: #1a1a2e;
-      --table-head-background: #16213e;
+      --cover-heading-color: #ffffff;
+      --cover-color: #c8c8d0;
+      --cover-blockquote-color: #e8d48b;
+
+      --blockquote-border-color: #d4af37;
+      --blockquote-background: #faf8f2;
+      --blockquote-color: #5a5a6e;
+
+      --table-head-background: #f8f6f0;
+      --table-head-color: #1a1a2e;
+      --table-row-odd-background: #fdfcfa;
+      --table-cell-border-color: #e8e4da;
+
+      --code-inline-background: #f5f2eb;
+      --code-inline-color: #7a6420;
+      --code-theme-background: #f8f6f0;
     }
-    .markdown-section table { border-collapse: collapse; width: 100%; }
-    .markdown-section th, .markdown-section td { border: 1px solid #333; padding: 8px 12px; }
+
+    .markdown-section h1 {
+      border-bottom: 2px solid var(--blockquote-border-color);
+      padding-bottom: 0.3em;
+    }
+    .markdown-section h2 {
+      border-bottom: 1px solid var(--sidebar-border-color);
+      padding-bottom: 0.2em;
+    }
+    .markdown-section table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 0.92em;
+    }
+    .markdown-section th,
+    .markdown-section td {
+      border: 1px solid var(--table-cell-border-color);
+      padding: 8px 12px;
+    }
+    .markdown-section th {
+      font-weight: 600;
+    }
+
+    /* Cover page — compact height */
+    section.cover {
+      min-height: 60vh;
+      padding: 60px 0;
+    }
+    section.cover .cover-main > h1 {
+      font-size: 2.2rem;
+      margin: 0 0 0.3em;
+    }
+    section.cover .cover-main > blockquote {
+      font-size: 1rem;
+    }
+    section.cover .cover-main > ul {
+      font-size: 0.9rem;
+    }
+
+    /* Cover page buttons — unified style */
+    section.cover .cover-main > p:last-child a {
+      border: 1.5px solid rgba(212, 175, 55, 0.6) !important;
+      color: #e8d48b !important;
+      background: transparent !important;
+      font-weight: 600;
+      border-radius: 6px;
+    }
+    section.cover .cover-main > p:last-child a:hover {
+      background: #d4af37 !important;
+      color: #1a1a2e !important;
+      border-color: #d4af37 !important;
+    }
   </style>
 </head>
 <body>
-  <div id="app"></div>
+  <div id="app">Loading...</div>
   <script>
     window.$docsify = {
       name: 'ros2mobile',
       repo: 'https://github.com/taikitanaka3/ros2-mobile',
       loadSidebar: true,
+      coverpage: true,
+      maxLevel: 4,
       subMaxLevel: 2,
       auto2top: true,
+      search: {
+        paths: 'auto',
+        placeholder: 'Search...',
+        noData: 'No results.',
+        depth: 3,
+        namespace: 'ros2mobile',
+      },
     };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/docsify@4.13.1/lib/docsify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4.13.1/lib/plugins/search.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-themeable@0.9.0/dist/js/docsify-themeable.min.js"></script>
 </body>
 </html>
