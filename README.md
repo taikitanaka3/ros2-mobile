@@ -2,6 +2,8 @@
 
 Stream your Android phone's sensors to ROS 2 in one command.
 
+**[Documentation](https://taikitanaka3.github.io/ros2-mobile/)** | **[Privacy Policy](https://taikitanaka3.github.io/ros2-mobile/#/privacy-policy)**
+
 ```
 Android Phone ──Zenoh──▶ Bridge Node ──▶ ROS 2 Topics ──▶ RViz 2
 ```
