@@ -20,7 +20,7 @@ services:
   # Exposes ZENOH_PORT on the host so Android devices (WiFi/USB) can reach it.
   # ---------------------------------------------------------------------------
   zenoh:
-    image: ${ZENOH_IMAGE:-eclipse/zenoh:1.3.3}
+    image: ${ZENOH_IMAGE:-eclipse/zenoh:1.7.2}
     environment:
       - ZENOH_LOG_LEVEL=${ZENOH_LOG_LEVEL:-info}
     ports:
